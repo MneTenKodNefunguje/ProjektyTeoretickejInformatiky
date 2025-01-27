@@ -1,0 +1,58 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.animation import FuncAnimation
+
+# Vytvorenie kruhu a oscilácie
+theta = np.linspace(0, 2 * np.pi, 100)
+x_circle = np.cos(theta)
+y_circle = np.sin(theta)
+z_circle = np.zeros_like(theta)
+
+def create_wave(t):
+    z = np.linspace(-1, 1, 100)
+    x_sin = np.sin(2 * np.pi * z + t)
+    x_cos = np.cos(2 * np.pi * z + t)
+    y = np.zeros_like(z)
+    return x_sin, x_cos, y, z
+
+# Nastavenie grafu
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.set_xlim([-1.5, 1.5])
+ax.set_ylim([-1.5, 1.5])
+ax.set_zlim([-1.5, 1.5])
+ax.set_xlabel("X")
+ax.set_ylabel("Y")
+ax.set_zlabel("Z")
+
+# Kruh
+circle_line, = ax.plot(x_circle, y_circle, z_circle, 'r-', label="Circle")
+
+# Sínus a kosínus
+sin_line, = ax.plot([], [], [], 'b-', label="Sine")
+cos_line, = ax.plot([], [], [], 'g-', label="Cosine")
+
+# Inicializácia
+
+def init():
+    sin_line.set_data([], [])
+    sin_line.set_3d_properties([])
+    cos_line.set_data([], [])
+    cos_line.set_3d_properties([])
+    return sin_line, cos_line
+
+# Aktualizácia animácie
+
+def update(t):
+    x_sin, x_cos, y, z = create_wave(t)
+    sin_line.set_data(x_sin, y)
+    sin_line.set_3d_properties(z)
+    cos_line.set_data(x_cos, y)
+    cos_line.set_3d_properties(z)
+    return sin_line, cos_line
+
+# Spustenie animácie
+ani = FuncAnimation(fig, update, frames=np.linspace(0, 2 * np.pi, 100), init_func=init, blit=False, interval=50)
+plt.legend()
+plt.show()
